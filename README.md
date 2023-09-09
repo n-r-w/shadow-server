@@ -13,7 +13,7 @@ Data flows through the following chain:
 - WireGuard server (remote)
 - Free Internet
 
-For simplicity, all operations are performed as root, using Ubuntu 22.04 as an example. First, you need to follow this guide, and then the client-side part <https://github.com/n-r-w/shadow-client>
+For simplicity, all operations are performed as root, using Ubuntu 22.04 as an example. All settings are for IPv4 only. First, you need to follow this guide, and then the client-side part <https://github.com/n-r-w/shadow-client>
 
 Tested on:
 
