@@ -1,0 +1,15 @@
+[Unit]
+Description=Shadow VPN server
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=simple
+Restart=on-failure
+WorkingDirectory=/root/shadow-server
+ExecStart=/usr/local/bin/docker-compose up --build
+ExecReload=/usr/local/bin/docker-compose down && /usr/local/bin/docker-compose up --build
+ExecStop=/usr/local/bin/docker-compose down
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,24 @@
+version: '3'
+services:
+  shadow:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    logging:
+      driver: journald
+    ports:
+      - 443:443      
+      - 80:80      
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+      - net.ipv4.ip_forward=1
+    environment:
+      - WG_SERVER_PRIVATE_KEY
+      - WG_CLIENT_PUBLIC_KEY      
+      - CK_UID
+      - CK_PRIVATE_KEY
+     
