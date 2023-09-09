@@ -122,7 +122,6 @@ Setting the values ​​of the variables
 We check that everything starts (the first launch is long)
 
 ```bash
-sysctl -w net.ipv4.ip_forward=1
 docker-compose up
 ```
 
