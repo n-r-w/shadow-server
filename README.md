@@ -65,6 +65,7 @@ chmod +x /usr/local/bin/docker-compose
 ### Alternatively, install docker via snap (easier)
 
 ```bash
+apt install snapd
 snap install docker
 ```
 
