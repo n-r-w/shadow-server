@@ -73,7 +73,7 @@ mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose && \
 chmod +x /usr/local/bin/docker-compose
 ```
 
-### Alternatively, install docker via snap
+### Alternatively, install docker via snap (in Ubuntu 22.04, it is not working at the moment)
 
 ```bash
 apt install -y snapd && snap install docker
