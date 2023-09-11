@@ -115,7 +115,9 @@ git clone https://github.com/n-r-w/shadow-server.git && cd shadow-server
 In the doc directory there is an example file with environment variables ```env.txt```. Copy it to the ```.env``` file, which contains environment variables for ```docker-compose```
 
 ```bash
-cp ./doc/env.txt ./.env && nano ./.env
+apt install -y nano && \
+cp ./doc/env.txt ./.env && \
+nano ./.env
 ```
 
 Setting the values ​​of the variables
