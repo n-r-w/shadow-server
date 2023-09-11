@@ -21,70 +21,61 @@ Tested on:
 - Local server Ubuntu 20.04 (2 CPU cores, 2GB RAM, single ethernet port).
 - Speedtest Download Mbps: 108, Upload Mbps: 71. This is slower than a direct WireGuard connection (Download Mbps: 254, Upload Mbps: 189) because the traffic goes through Cloak and is encrypted to make it indistinguishable from regular HTTP traffic, disguising it as a VPN connection. The bottleneck here is the server's CPU. If a dual-core configuration is used, the speed should be higher.
 
+## Go to the home folder
+
+```bash
+cd /root
+```
+
 ## Configuring the Firewall
 
 ```bash
-ufw allow openssh
-ufw allow http
-ufw allow https
-ufw enable
+ufw allow openssh && ufw allow http && ufw allow https && echo "y" | ufw enable
 ```
 
 ## Server Preparation
 
 ```bash
-cd /root
-apt update
-apt install -y nano wget git wireguard
-wget https://github.com/cbeuw/Cloak/releases/download/v2.7.0/ck-server-linux-amd64-v2.7.0
-RUN mv ck-server-linux-amd64-v2.7.0 ck-server
-RUN chmod +x ck-server
+apt update && apt install -y nano wget git wireguard && \
+wget https://github.com/cbeuw/Cloak/releases/download/v2.7.0/ck-server-linux-amd64-v2.7.0 && \
+mv ck-server-linux-amd64-v2.7.0 ck-server && chmod +x ck-server
 ```
 
 We've downloaded WireGuard and Cloak server for generating encryption keys. Once generated, they are no longer needed on the host.
 
 Enable ip forward
 
-- ```nano /etc/sysctl.conf```
-- edit: ```net.ipv4.ip_forward=1```
-- apply changes: ```sysctl -p```
+```bash
+echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf && sysctl -p
+```
 
 ## docker setup
 
 ### Install docker Manually
 
-- Install docker itself using the instructions at  <https://docs.docker.com/engine/install/ubuntu/>:
-
+- Install docker manually using manual at <https://docs.docker.com/engine/install/ubuntu/> + install docker-compose:
 ```bash
-# Add Docker's official GPG key:
-apt-get update
-apt-get install ca-certificates curl gnupg
-install -m 0755 -d /etc/apt/keyrings
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-chmod a+r /etc/apt/keyrings/docker.gpg
-
-# Add the repository to Apt sources:
+apt update && apt install -y ca-certificates curl gnupg && \
+install -m 0755 -d /etc/apt/keyrings && \
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg --yes && \
+chmod a+r /etc/apt/keyrings/docker.gpg && \
+if [ ! -e /etc/apt/sources.list.d/docker.list ]; then
 echo \
-  "deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
-  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-apt-get update
-apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-```
-
-- Install docker-compose
-
-```bash
-wget https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-linux-x86_64
-mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose
+"deb [arch="$(dpkg --print-architecture)" signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+"$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
+sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+fi && \
+apt update && \
+apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin && \
+wget https://github.com/docker/compose/releases/download/v2.21.0/docker-compose-linux-x86_64 && \
+mv docker-compose-linux-x86_64 /usr/local/bin/docker-compose && \
 chmod +x /usr/local/bin/docker-compose
 ```
 
-### Alternatively, install docker via snap (easier)
+### Alternatively, install docker via snap
 
 ```bash
-apt install snapd
-snap install docker
+apt install snapd && snap install docker
 ```
 
 ## Generation of encryption keys
@@ -92,7 +83,7 @@ snap install docker
 ### Generating wireguard keys
 
 ```bash
-wg genkey | tee wg-server-private.key | wg pubkey > wg-server-public.key
+wg genkey | tee wg-server-private.key | wg pubkey > wg-server-public.key && \
 wg genkey | tee wg-client-private.key | wg pubkey > wg-client-public.key
 ```
 
@@ -104,8 +95,7 @@ wg genkey | tee wg-client-private.key | wg pubkey > wg-client-public.key
 ### Generating cloak keys
 
 ```bash
-./ck-server -k > cloak.keys
-./ck-server -u > cloak.uid
+./ck-server -k > cloak.keys && ./ck-server -u > cloak.uid
 ```
 
 - ```cloak.keys``` cloak keys pair. public key (will be needed when installing the client part <https://github.com/n-r-w/shadow-client>), private key
@@ -116,8 +106,7 @@ wg genkey | tee wg-client-private.key | wg pubkey > wg-client-public.key
 ### Download this repository
 
 ```bash
-git clone https://github.com/n-r-w/shadow-server.git
-cd shadow-server
+git clone https://github.com/n-r-w/shadow-server.git && cd shadow-server
 ```
 
 ### Set up environment variables for docker
@@ -125,8 +114,7 @@ cd shadow-server
 In the doc directory there is an example file with environment variables ```env.txt```. Copy it to the ```.env``` file, which contains environment variables for ```docker-compose```
 
 ```bash
-cp ./doc/env.txt ./.env
-nano ./.env
+cp ./doc/env.txt ./.env && nano ./.env
 ```
 
 Setting the values ​​of the variables
@@ -155,18 +143,18 @@ docker-compose down
 If installed via ```snap```:
 
 ```bash
-cp ./doc/shadow-server-snap.service /etc/systemd/system/shadow-server-snap.service
-systemctl daemon-reload
-systemctl enable shadow-server-snap
+cp ./doc/shadow-server-snap.service /etc/systemd/system/shadow-server-snap.service && \
+systemctl daemon-reload && \
+systemctl enable shadow-server-snap && \
 systemctl start shadow-server-snap
 ```
 
 If you installed it according to the instructions from the ubuntu website:
 
 ```bash
-cp ./doc/shadow-server.service /etc/systemd/system/shadow-server.service
-systemctl daemon-reload
-systemctl enable shadow-server
+cp ./doc/shadow-server.service /etc/systemd/system/shadow-server.service && \
+systemctl daemon-reload && \
+systemctl enable shadow-server && \
 systemctl start shadow-server
 ```
 
