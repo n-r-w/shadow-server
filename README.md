@@ -53,7 +53,8 @@ echo "net.ipv4.ip_forward=1" >> /etc/sysctl.conf && sysctl -p
 
 ### Install docker Manually
 
-- Install docker manually using manual at <https://docs.docker.com/engine/install/ubuntu/> + install docker-compose:
+Install docker manually using manual at <https://docs.docker.com/engine/install/ubuntu/> + install docker-compose:
+
 ```bash
 apt update && apt install -y ca-certificates curl gnupg && \
 install -m 0755 -d /etc/apt/keyrings && \
@@ -75,7 +76,7 @@ chmod +x /usr/local/bin/docker-compose
 ### Alternatively, install docker via snap
 
 ```bash
-apt install snapd && snap install docker
+apt install -y snapd && snap install docker
 ```
 
 ## Generation of encryption keys
