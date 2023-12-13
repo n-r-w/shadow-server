@@ -4,7 +4,7 @@
 
 Data flows through the following chain:
 
-- Computer (LAN) with the client part of this configuration specified as the gateway
+- Computer (LAN) with the client part of this configuration specified as gateway or proxy server
 - Gateway (LAN)
 - WireGuard client (LAN)
 - Cloak client (LAN)
