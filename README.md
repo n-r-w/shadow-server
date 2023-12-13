@@ -77,6 +77,7 @@ chmod +x /usr/local/bin/docker-compose
 
 ```bash
 apt install -y snapd && snap install docker
+snap refresh docker --channel=latest/edge
 ```
 
 ## Generation of encryption keys
